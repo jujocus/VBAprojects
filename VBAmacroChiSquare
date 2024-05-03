@@ -1,0 +1,62 @@
+Sub ChiSquare()
+
+Dim wb As Workbook
+Dim ws As Worksheet
+Dim churn As Range
+Dim gender As Range
+Dim NoAndMale As Long
+Dim YesAndMale As Long
+Dim NoAndFemale As Long
+Dim YesAndFemale As Long
+Dim ExpectedNoAndMale As Double
+Dim ExpectedYesAndMale As Double
+Dim ExpectedNoAndFemale As Double
+Dim ExpectedYesAndFemale As Double
+Dim TotalMales As Long
+Dim TotalFemales As Long
+Dim TotalYes As Long
+Dim TotalNo As Long
+Dim Total As Long
+Dim chivalueMale0 As Double
+Dim chivalueMale1 As Double
+Dim chivalueFemale0 As Double
+Dim chivalueFemale1 As Double
+Dim ChiSquare As Double
+Dim pvalue As Double
+Dim message As String
+
+Set wb = Workbooks("pruebas chi cuadrado.xlsx")
+Set ws = wb.Worksheets(2)
+
+Set churn = ws.Range("B3:B7045")
+Set gender = ws.Range("C3:C7045")
+
+NoAndMale = Application.WorksheetFunction.CountIfs(churn, "0", gender, "Male")
+YesAndMale = Application.WorksheetFunction.CountIfs(churn, "1", gender, "Male")
+NoAndFemale = Application.WorksheetFunction.CountIfs(churn, "0", gender, "Female")
+YesAndFemale = Application.WorksheetFunction.CountIfs(churn, "1", gender, "Female")
+
+TotalMales = YesAndMale + NoAndMale
+TotalFemales = YesAndFemale + NoAndFemale
+TotalYes = YesAndFemale + YesAndMale
+TotalNo = NoAndFemale + NoAndMale
+Total = TotalMales + TotalFemales
+
+ExpectedNoAndMale = TotalMales * TotalNo / Total
+ExpectedYesAndMale = TotalMales * TotalYes / Total
+ExpectedNoAndFemale = TotalFemales * TotalNo / Total
+ExpectedYesAndFemale = TotalFemales * TotalYes / Total
+
+chivalueMale0 = (NoAndMale - ExpectedNoAndMale) ^ 2 / ExpectedNoAndMale
+chivalueFemale0 = (NoAndFemale - ExpectedNoAndFemale) ^ 2 / ExpectedNoAndFemale
+chivalueMale1 = (YesAndMale - ExpectedYesAndMale) ^ 2 / ExpectedYesAndMale
+chivalueFemale1 = (YesAndFemale - ExpectedYesAndFemale) ^ 2 / ExpectedYesAndFemale
+
+ChiSquare = chivalueMale0 + chivalueFemale0 + chivalueMale1 + chivalueFemale1
+pvalue = Application.WorksheetFunction.ChiSq_Dist_RT(ChiSquare, 1)
+
+message = "The Chi-square test for this is: " & ChiSquare & vbNewLine & "The p-value for this is: " & pvalue
+
+MsgBox message
+
+End Sub
